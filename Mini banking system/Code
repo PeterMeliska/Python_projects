@@ -1,0 +1,46 @@
+# -------------------------------------------------
+# Simulated Database
+# -------------------------------------------------
+accounts=[]
+# -------------------------------------------------
+# Helper Function: Find Account
+# -------------------------------------------------
+def find_account(name: str):
+    """
+    Find an account by name.
+    Args:
+        name (str): Account holder name.
+    Returns:
+        dict: Account dictionary if found.
+        None: If account does not exist.
+    """
+    for account in accounts:
+        if accounts["name"].lower() == name.lower():
+            return account
+    return None
+    
+
+def create_account(name: str, initial_balance: float):
+    """
+    Create a new bank account.
+    Args:
+        name (str): Account holder name.
+        initial_balance (float): Starting balance.
+    Returns:
+        dict: Created account dictionary.
+    Raises:
+        ValueError: If balance is negative or account exists.
+    """
+    if initial_balance < 0:
+        raise ValueError("Initial balance cannot be negative.")
+    if find_account(name):
+        raise ValueError("Account with this name already exists.")
+    
+    account={
+        "name":name,
+        "balance":initial_balance,
+        "transactions":[]
+    }
+    accounts.append(account)
+    return account
+   
