@@ -1,26 +1,32 @@
 # -------------------------------------------------
 # Simulated Database
 # -------------------------------------------------
+
 accounts=[]
+
 # -------------------------------------------------
 # Helper Function: Find Account
 # -------------------------------------------------
+
 def find_account(name: str):
     """
     Find an account by name.
     Args:
-        name (str): Account holder name.
+        name (str): Account holder name.    
     Returns:
         dict: Account dictionary if found.
         None: If account does not exist.
     """
     for account in accounts:
-        if accounts["name"].lower() == name.lower():
+        if account["name"].lower() == name.lower():
             return account
-    return None
-    
+    return None    
 
-def create_account(name: str, initial_balance: float):
+# -------------------------------------------------
+# Create Account
+# -------------------------------------------------
+
+def create_account(name: str,initial_balance: float):
     """
     Create a new bank account.
     Args:
@@ -31,16 +37,125 @@ def create_account(name: str, initial_balance: float):
     Raises:
         ValueError: If balance is negative or account exists.
     """
-    if initial_balance < 0:
-        raise ValueError("Initial balance cannot be negative.")
-    if find_account(name):
-        raise ValueError("Account with this name already exists.")
+    if initial_balance < 0 :
+        raise ValueError("Initial balance cannot be negative")
     
-    account={
-        "name":name,
-        "balance":initial_balance,
-        "transactions":[]
-    }
+    if find_account(name):
+        raise ValueError("This account already exists")
+
+    else:
+        account={
+            "name":name,
+            "balance":initial_balance,
+            "transactions":[]
+        }
     accounts.append(account)
     return account
+  
+# -------------------------------------------------
+# Deposit
+# -------------------------------------------------
+
+def deposit(name: str,amount: float):
+    """
+    Deposit money into an account.
+    Args:
+        name (str): Account holder name.
+        amount (float): Amount to deposit.
+    Returns:
+        float: Updated balance.
+    Raises:
+        ValueError: If amount is invalid or account not found.
+    """
+    if amount <= 0 :
+        raise ValueError("Deposit cannot be 0") 
+    
+    account=find_account(name)
+    if not account:
+        raise ValueError("This account doesnt exists")
+    
+    account["balance"] += amount
+
+    account["transactions"].append(
+        {"type":"Deposit",
+         "amount":amount})
+    
+    return account["balance"]
+
+# -------------------------------------------------
+# Withdraw
+# -------------------------------------------------
+
+def withdraw(name: str,amount: float):
+    """
+    Withdraw money from an account.
+    Args:
+        name (str): Account holder name.
+        amount (float): Amount to withdraw.
+    Returns:
+        float: Updated balance.
+    Raises:
+        ValueError: If insufficient funds or invalid amount.
+    """
+    if amount <= 0 :
+        raise ValueError("Wihdraw mus be greater than 0 ")    
+
+    account=find_account(name)
+
+    if not account:
+        raise ValueError("Account not found.")
+    
+    if amount > account["balance"]:
+        raise ValueError("Insufficient funds")
+
+    account["balance"] -= amount
+
+    account["transactions"].append({
+        "type":"Withdrawl",
+        "amount":amount})
+    
+    return account["balance"]
+
+# -------------------------------------------------
+# Show Account Summary
+# -------------------------------------------------
+
+def show_account(name: str):
+    """
+    Display account summary including transactions.
+    Args:
+        name (str): Account holder name.
+    """
+    account=find_account(name)
+    if not account:
+        return
+    
+    print(f"\nAccount summary for {account["name"]}")
+    print(f"Current account balance {account["balance"]}")
+
+    print("Transactions:")
+    if not account["transactions"]:
+        print("No transactions yet")
+    else:
+        for transaction in account["transactions"]:
+            print(f"-{transaction["type"]} : € {transaction["amount"]}")
+
+# -------------------------------------------------
+# Testing Section
+# -------------------------------------------------
+
+def run_test():
+    try:
+        create_account("Peter", 1000)
+        deposit("Peter", 200)
+        withdraw("Peter", 150)
+        withdraw("Peter", 500) 
+
+    except ValueError as error:
+        print("Error:", error)
+
+    show_account("Peter")
+
+run_test()
+
    
